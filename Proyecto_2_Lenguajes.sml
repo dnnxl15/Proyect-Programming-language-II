@@ -33,8 +33,9 @@ val test1 = card_color(Clubs, Num 2) = Black;
 fun card_value(pCard: card) = 
 	case #2 pCard of
 		Jack => 10
-	|	Queen => 15
-	|   King => 11
+	|	Queen => 10
+	|   King => 10
+	|   Ace => 11
 	|   Num number => number
 
 val test2 = card_value(Clubs, Num 2) = 2;
