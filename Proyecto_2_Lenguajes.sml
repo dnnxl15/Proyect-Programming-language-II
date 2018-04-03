@@ -127,3 +127,55 @@ fun all_same_color(pCardList : card list) =
 val test9 = all_same_color([(Diamonds, Queen), (Clubs, Jack), (Clubs, Jack)]) = false;
 
 val test10 = all_same_color([(Clubs, Jack), (Clubs, Jack)]) = true;
+
+(*Function sum_cards*)
+(*Last modification: 30/03/18*)
+fun sum_cards (cs : card list) =
+	let 
+		fun sum_cards_aux(cs, acum) =
+			case cs of
+				[] => acum
+			  | head::tail => sum_cards_aux(tail, acum + card_value(head))
+	in
+		sum_cards_aux(cs, 0)
+	end
+
+(*Function score*)
+(*Last modification: 30/03/18*)
+fun score(cs : card list, goal : int) = 
+	let
+		val sum = sum_cards cs
+		val preliminary = if(sum > goal) then 3*(sum - goal) else (goal - sum)
+	in
+		if(all_same_color cs) then preliminary div 2 else preliminary
+	end
+
+(*Function officiate*)
+(*Last modification: 30/03/18*)
+fun officiate (cards : card list, moves : move list, goal : int) =
+	let
+		fun officiate_aux(cards: card list, held : card list, moves : move list, goal : int) =
+			case(cards, held, moves, goal) of
+				(_, _, [], _) => score (held, goal)
+			 |  ([], _, _, _) => score (held, goal)
+			 |  (c::cs, _, m::ms, _) => case m of
+			 						Discard d => officiate_aux(c::cs, remove_card(held, d, IllegalMove), ms, goal)
+			 					  | Draw => case c::cs of
+			 					  			[] => score(held, goal)
+			 					  			| _ =>
+			 					  				let
+			 					  					val held' = c::held
+			 					  					val held_sum = sum_cards(held')
+			 					  				in
+			 					  					if(held_sum > goal)
+			 					  					then score(held', goal)
+			 					  					else officiate_aux(cs, held', ms, goal)
+			 					  				end
+	in
+		officiate_aux(cards, [], moves, goal)
+	end
+
+val test11 = sum_cards [(Clubs, Num 2),(Clubs, Num 2)]
+val test12 = score ([(Hearts, Num 2),(Clubs, Num 4)],10)
+val test13 = officiate ([(Hearts, Num 2),(Clubs, Num 4)],[Draw], 15)
+val test14 = officiate ([(Clubs,Ace),(Spades,Ace),(Clubs,Ace),(Spades,Ace)], [Draw,Draw,Draw,Draw,Draw], 42)
