@@ -118,7 +118,7 @@ val test9 = all_same_color_aux([(Clubs, Jack), (Clubs, Jack)], Black) = true;
 
 fun all_same_color(pCardList : card list) =
 	case pCardList of
-    [] => false
+    [] => true
   | x::pCardList' => if all_same_color_aux(pCardList, Red)
   					 then true
   					 else if all_same_color_aux(pCardList, Black)
